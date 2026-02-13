@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://d34xfg3t3oha2"]
+
+[ext_resource type="PackedScene" uid="uid://bljj8253h34ti" path="res://addons/atlas_recolor/assets/trunk_large_A.gltf.glb" id="1_0erif"]
+[ext_resource type="Script" uid="uid://cmc3mdqqf8fg" path="res://addons/atlas_recolor/scripts/atlas_recolor_shader.gd" id="1_228c8"]
+[ext_resource type="Shader" uid="uid://c8do4in6dx6x" path="res://addons/atlas_recolor/shader/atlas_recolor.gdshader" id="2_q1rks"]
+[ext_resource type="Texture2D" uid="uid://dwk5eg67jensb" path="res://addons/atlas_recolor/assets/trunk_large_A_dungeon_texture.png" id="4_0xwu2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lvcql"]
+render_priority = 0
+shader = ExtResource("2_q1rks")
+shader_parameter/background = ExtResource("4_0xwu2")
+shader_parameter/row1 = PackedColorArray(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0.14613289, 0.403125, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+shader_parameter/row2 = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+shader_parameter/row3 = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+shader_parameter/row4 = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+script = ExtResource("1_228c8")
+metadata/_custom_type_script = "uid://cmc3mdqqf8fg"
+
+[node name="Node3D" type="Node3D" unique_id=1900838890]
+
+[node name="trunk_large_A_gltf" parent="." unique_id=1600946098 instance=ExtResource("1_0erif")]
+
+[node name="trunk_large_A" parent="trunk_large_A_gltf" index="0" unique_id=1665904760]
+material_overlay = SubResource("ShaderMaterial_lvcql")
+
+[editable path="trunk_large_A_gltf"]
