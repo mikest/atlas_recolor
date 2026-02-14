@@ -5,6 +5,10 @@ void vertex() {
 	// Called for every vertex the material is visible on.
 }
 
+uniform float roughness: hint_range(0.,1.) = 1.0;
+uniform float metallic : hint_range(0.,1.) = 0.0;
+uniform float specular : hint_range(0.,1.) = 0.5;
+
 uniform sampler2D background : source_color, hint_default_transparent;
 uniform vec4[8*2] row1: source_color;
 uniform vec4[8*2] row2: source_color;
@@ -31,16 +35,18 @@ vec4 mask_color(vec4 light, vec4 dark, vec2 uv, float posx, float posy, float wi
 
 void fragment() {
 	vec2 size = vec2(1./8., 1./4.);
-	//ALBEDO = vec3(0.);
-	//ALPHA = 0.;
-	
-	vec4 color = vec4(0.);
+	vec4 color = vec4(0);
 	for(int col=0; col<8; col++) {
 		color += mask_color(row1[col*2], row1[col*2+1], UV, float(col), 0., size.x, size.y);
 		color += mask_color(row2[col*2], row2[col*2+1], UV, float(col), 1., size.x, size.y);
 		color += mask_color(row3[col*2], row3[col*2+1], UV, float(col), 2., size.x, size.y);
 		color += mask_color(row4[col*2], row4[col*2+1], UV, float(col), 3., size.x, size.y);
 	}
+	
+	ROUGHNESS = roughness;
+	METALLIC = metallic;
+	SPECULAR = specular;
+	
 	ALBEDO = color.rgb;
-	//ALPHA = color.a;
+	ALPHA = color.a;
 }
