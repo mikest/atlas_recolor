@@ -8,6 +8,10 @@ const NUM_ROWS: int = 4
 const GRADIENTS_PER_ROW: int = 8
 const COLORS_PER_GRADIENT: int = 2
 const COLORS_PER_ROW: int = GRADIENTS_PER_ROW * COLORS_PER_GRADIENT
+const BUTTON_SIZE: int = 24
+const GRID_MARGIN: int = 16
+const PANEL_MARGIN: int = 8
+const PREVIEW_SIZE: int = (BUTTON_SIZE*2 + GRID_MARGIN) * NUM_ROWS + GRID_MARGIN
 
 ## Property names on the edited object for each row.
 const ROW_PROPERTIES: PackedStringArray = [
@@ -37,51 +41,58 @@ var _preview: TextureRect
 var _file_dialog: FileDialog
 
 func _init() -> void:
+	print("init")
+	
 	# used by the colorpickerbuttons
 	_empty_stylebox = StyleBoxEmpty.new()
 	
 	# Build the grid panel.
 	_grid = GridContainer.new()
 	_grid.columns = GRADIENTS_PER_ROW
-	_grid.add_theme_constant_override("v_separation", 16.0)
-	_grid.add_theme_constant_override("h_separation", 16.0)
+	_grid.add_theme_constant_override("v_separation", GRID_MARGIN)
+	_grid.add_theme_constant_override("h_separation", GRID_MARGIN)
 	_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_grid.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_KEEP_HEIGHT, 0)
 	
+	# Margin container for aligning the color editor buttons with the texture background
 	_margin = MarginContainer.new()
 	_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_margin.add_theme_constant_override("margin_left", 8)
-	_margin.add_theme_constant_override("margin_top", 8)
-	_margin.add_theme_constant_override("margin_right", 8)
-	_margin.add_theme_constant_override("margin_bottom", 8)
+	_margin.add_theme_constant_override("margin_left", PANEL_MARGIN)
+	_margin.add_theme_constant_override("margin_top", PANEL_MARGIN)
+	_margin.add_theme_constant_override("margin_right", PANEL_MARGIN)
+	_margin.add_theme_constant_override("margin_bottom", PANEL_MARGIN)
 	_margin.add_child(_grid)
 
+	# Background will eventually have the underlay texture
 	_background = StyleBoxTexture.new()
 	_background.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 	_background.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 
+	# Our panel editor
 	_panel = PanelContainer.new()
 	_panel.add_theme_stylebox_override("panel", _background)
 	_panel.add_child(_margin)
 	_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	
-	# add the editor panel and preview side by side
+	# Add the Editor panel and Preview side by side
 	_hbox = HBoxContainer.new()
-	_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_hbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	#_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_hbox.add_child(_panel)
 	
+	# A little arrow to show what the editor applies to...
 	var _label: Label = Label.new()
 	_label.text = ">"
 	_hbox.add_child(_label)
 
+	# Preview of the composited texture
 	_preview = TextureRect.new()
 	_preview.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_preview.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var preview_size := (32+32+16)*4
-	_preview.custom_minimum_size = Vector2(preview_size, preview_size)
+	_preview.custom_minimum_size = Vector2(PREVIEW_SIZE, PREVIEW_SIZE)
 	_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_hbox.add_child(_preview)
 	
@@ -186,7 +197,7 @@ func _create_color_button(row_idx: int, color_idx: int) -> ColorPickerButton:
 	var btn: ColorPickerButton = ColorPickerButton.new()
 	btn.set_meta("row", row_idx)
 	btn.set_meta("index", color_idx)
-	btn.custom_minimum_size = Vector2(32, 32)
+	btn.custom_minimum_size = Vector2(BUTTON_SIZE, BUTTON_SIZE)
 	
 	btn.set_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_KEEP_SIZE)
 	
@@ -246,6 +257,10 @@ func _refresh_all() -> void:
 	var mat: ShaderMaterial = get_edited_object() as ShaderMaterial
 	if mat == null:
 		return
+	
+	var obj: AtlasRecolorShader = get_edited_object() as AtlasRecolorShader
+	
+	print("updating")
 
 	for row_idx: int in range(NUM_ROWS):
 		var row_buttons: Array = _buttons[row_idx]
@@ -253,8 +268,9 @@ func _refresh_all() -> void:
 			var btn: ColorPickerButton = row_buttons[color_idx] as ColorPickerButton
 			btn.color = _get_color(row_idx, color_idx)
 	
-	_background.texture = mat.get_shader_parameter("background")
+	_renderer.size = Vector2i(obj.bake_size, obj.bake_size)
+	_background.set_texture(obj.underlay_texture)
 	
 	var standard := _mesh_instance.material_override as StandardMaterial3D
-	standard.albedo_texture = _background.texture
+	standard.albedo_texture = obj.underlay_texture
 	_mesh_instance.material_overlay = mat

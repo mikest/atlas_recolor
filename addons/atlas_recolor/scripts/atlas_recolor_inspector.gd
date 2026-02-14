@@ -9,19 +9,26 @@ func _can_handle(object: Object) -> bool:
 	return object is AtlasRecolorShader
 
 
+# list of props we should update the editor for
+var _update_props: Array = [
+			"bake_size",
+			"underlay_texture",
+			"shader_parameter/background",
+			"shader_parameter/row1",
+			"shader_parameter/row2",
+			"shader_parameter/row3",
+			"shader_parameter/row4"
+		]
+
+
 func _parse_begin(object: Object) -> void:
-	# TODO: Add custom controls at the top of the inspector.
+	add_property_editor_for_multiple_properties("Atlas Overlay", _update_props, AtlasEditor.new())
 	pass
 
 
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
-	# Replace the default editor for the "shader" property.
-	if name == "shader":
-		add_property_editor(name, AtlasEditor.new())
-		return true
 	return false
 
 
 func _parse_end(object: Object) -> void:
-	# TODO: Add custom controls at the bottom of the inspector.
 	pass

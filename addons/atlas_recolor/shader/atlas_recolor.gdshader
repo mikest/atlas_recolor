@@ -31,8 +31,8 @@ vec4 mask_color(vec4 light, vec4 dark, vec2 uv, float posx, float posy, float wi
 
 void fragment() {
 	vec2 size = vec2(1./8., 1./4.);
-	ALBEDO = vec3(0.);
-	ALPHA = 0.;
+	//ALBEDO = vec3(0.);
+	//ALPHA = 0.;
 	
 	vec4 color = vec4(0.);
 	for(int col=0; col<8; col++) {
@@ -42,5 +42,5 @@ void fragment() {
 		color += mask_color(row4[col*2], row4[col*2+1], UV, float(col), 3., size.x, size.y);
 	}
 	ALBEDO = color.rgb;
-	ALPHA = color.a;
+	//ALPHA = color.a;
 }
